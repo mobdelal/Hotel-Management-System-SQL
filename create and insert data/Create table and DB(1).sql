@@ -1,0 +1,82 @@
+CREATE DATABASE OnlineBookingManagementSystem;
+GO
+USE OnlineBookingManagementSystem;
+GO
+CREATE TABLE Hotel(
+	HotelID INT NOT NULL,
+	HotelName VARCHAR(50) NOT NULL,
+	HotelAdress VARCHAR(50) NOT NULL,
+	Phone VARCHAR(11),
+	Email VARCHAR(50) ,
+	Stars INT NOT NULL,
+	CONSTRAINT PK_Hotel PRIMARY KEY (HotelID)
+)
+GO
+CREATE TABLE Staff(
+	StaffID INT  NOT NULL,
+	HotelID INT NOT NULL,
+	FirstName VARCHAR(50) NOT NULL,
+	LastName VARCHAR(50)  ,
+	DateOfBirth DATE NOT NULL,
+	Position VARCHAR(50) NOT NULL,
+	Salary DECIMAL(10,2) NOT NULL,
+	HireDate DATE ,
+	Phone VARCHAR(11),
+	CONSTRAINT PK_Staff PRIMARY KEY (StaffID),
+	CONSTRAINT FK_Staff FOREIGN KEY (HotelID) REFERENCES Hotel(HotelID)
+	)
+GO
+CREATE TABLE RoomType(
+	TypeID INT  NOT NULL,
+	[Name] VARCHAR(50) NOT NULL,
+	[Description] VARCHAR(200),
+	PricePerNight DECIMAL(10,2) NOT NULL,
+	Capactiy INT,
+	CONSTRAINT PK_RoomType PRIMARY KEY (TypeID)
+) 
+GO
+CREATE TABLE Room(
+	RoomID INT  NOT NULL,
+	HotelID INT NOT NULL,
+	TypeID INT NOT NULL,
+	[Status] VARCHAR(20) NOT NULL,
+	CONSTRAINT PK_Room PRIMARY KEY (RoomID),
+	CONSTRAINT FK_Staff1 FOREIGN KEY (HotelID) REFERENCES Hotel(HotelID),
+	CONSTRAINT FK_Staff2 FOREIGN KEY (TypeID) REFERENCES RoomType(TypeID)
+)
+GO
+CREATE TABLE Guest(
+	GuestID INT  NOT NULL,
+	FirstName VARCHAR(50) NOT NULL,
+	LastName VARCHAR(50),
+	DateOfBirth DATE,
+	Adress VARCHAR(50),
+	Phone VARCHAR(11),
+	Email VARCHAR(50),
+	[Password] VARCHAR(10)
+	CONSTRAINT c10 UNIQUE(Password),
+	CONSTRAINT c11 CHECK(Password LIKE '%[0-9]%' AND Password LIKE '%[A-Z]%' AND Password LIKE '%[a-z]%' AND Password LIKE '%[!@#$%a^&*()-_+=.,;:''"`~]%' AND LEN(Password)>= 8),
+	CONSTRAINT PK_Guest PRIMARY KEY (GuestID)
+)
+GO
+CREATE TABLE Booking(
+	BookingID INT  NOT NULL,
+	GuestID INT  NOT NULL,
+	RoomNumber INT  NOT NULL,
+	CheckinDate DATE NOT NULL,
+	CheckoutDate DATE NOT NULL,
+	TotalPrice DECIMAL(10,2) NOT NULL,
+	CONSTRAINT PK_Booking PRIMARY KEY (BookingID),
+	CONSTRAINT FK_Booking1 FOREIGN KEY (GuestID) REFERENCES Guest(GuestID),
+	CONSTRAINT FK_Booking2 FOREIGN KEY (RoomNumber) REFERENCES Room(RoomID)
+)
+GO
+CREATE TABLE Payment(
+	PaymentID INT  NOT NULL,
+	BookingID INT  NOT NULL,
+	Amount DECIMAL(10,2) NOT NULL,
+	PaymentDate DATE NOT NULL,
+	PaymentMethod VARCHAR(50) NOT NULL,
+	CONSTRAINT PK_Payment PRIMARY KEY (PaymentID),
+	CONSTRAINT FK_Payment FOREIGN KEY (BookingID) REFERENCES Booking(BookingID)
+	)
